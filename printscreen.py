@@ -2,6 +2,9 @@ import mss
 import numpy as np
 import cv2
 from pathlib import Path
+import random
+import pydirectinput
+from win32api import GetAsyncKeyState
 import time
 import matplotlib.pyplot as plt
 from utils.general import check_img_size, non_max_suppression, scale_coords
@@ -11,6 +14,23 @@ from utils.datasets import IMG_FORMATS, VID_FORMATS, LoadImages, LoadStreams
 import torch
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # YOLOv5 root directory
+def plot_one_box(x, img, color=None, label=None, line_thickness=None):
+    tl = line_thickness or round(0.002 * (img.shape[0] + img.shape[1]) / 2) + 1  # line/font thickness
+    color = color or [random.randint(0, 255) for _ in range(3)]
+    c1, c2 = (int(x[0]), int(x[1])), (int(x[2]), int(x[3]))
+    cv2.rectangle(img, c1, c2, color)
+    if label:
+        tf = max(tl - 1, 1)  # font thickness
+        t_size = cv2.getTextSize('person', 0, fontScale=tl / 3, thickness=tf)[0]
+        c2 = c1[0] + t_size[0], c1[1] - t_size[1] - 3
+        cv2.rectangle(img, c1, c2, color, -1, cv2.LINE_AA)  # filled
+        cv2.putText(img, 'person', (c1[0], c1[1] - 2), 0, tl / 3, [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
+
+
+def plot(frame, labels, boxes):
+    for label, box in zip(labels, boxes):
+        # label = '%s %.2f'
+        plot_one_box(box, frame, label=label, color=(0, 255, 0), line_thickness=3)
 
 def grab_screen(
         weights=ROOT / 'runs/train/exp26/weights/best.pt',  # model.pt path(s)
@@ -54,6 +74,10 @@ def grab_screen(
         pred= model(im, augment=False, visualize=False)
         det = non_max_suppression(pred, conf_thres, iou_thres, classes, agnostic_nms,
                                   max_det=max_det)[0]
+        boxs = det[:,:4]
+        labels = det[:,4:5]
+        if pydirectinput.MOUSEEVENTF_LEFTCLICK:
+            pydirectinput.moveTo(int((boxs[0,0]+boxs[0,2])/2),int((boxs[0,1]+boxs[0,3])/2))
         print(det)
         # if (flag%200000)==1:
         #     folder_name = time.strftime("%Y%m%d_%H%M%S", time.localtime())
@@ -61,7 +85,9 @@ def grab_screen(
         #     flag = 0
         cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)  # cv2.WINDOW_NORMAL 根据窗口大小设置我们的图片大小
         cv2.resizeWindow(window_name, RESIZE_WIN_WIDTH, RESIZE_WIN_HEIGHT)
+        plot(img0, labels, boxs)
         cv2.imshow(window_name, img0)
+
         k = cv2.waitKey(1)
         flag +=1
         if k % 256 == 27:  # ESC

@@ -1,0 +1,79 @@
+Overriding model.yaml nc=80 with nc=1
+                 from  n    params  module                                  arguments
+  0                -1  1      3520  models.common.Conv                      [3, 32, 6, 2, 2]
+  1                -1  1     18560  models.common.Conv                      [32, 64, 3, 2]
+  2                -1  1     18816  models.common.C3                        [64, 64, 1]
+  3                -1  1     73984  models.common.Conv                      [64, 128, 3, 2]
+  4                -1  2    115712  models.common.C3                        [128, 128, 2]
+  5                -1  1    295424  models.common.Conv                      [128, 256, 3, 2]
+  6                -1  3    625152  models.common.C3                        [256, 256, 3]
+  7                -1  1   1180672  models.common.Conv                      [256, 512, 3, 2]
+  8                -1  1   1182720  models.common.C3                        [512, 512, 1]
+  9                -1  1    656896  models.common.SPPF                      [512, 512, 5]
+ 10                -1  1    131584  models.common.Conv                      [512, 256, 1, 1]
+ 11                -1  1         0  torch.nn.modules.upsampling.Upsample    [None, 2, 'nearest']
+ 12           [-1, 6]  1         0  models.common.Concat                    [1]
+ 13                -1  1    361984  models.common.C3                        [512, 256, 1, False]
+ 14                -1  1     33024  models.common.Conv                      [256, 128, 1, 1]
+ 15                -1  1         0  torch.nn.modules.upsampling.Upsample    [None, 2, 'nearest']
+ 16           [-1, 4]  1         0  models.common.Concat                    [1]
+ 17                -1  1     90880  models.common.C3                        [256, 128, 1, False]
+ 18                -1  1    147712  models.common.Conv                      [128, 128, 3, 2]
+ 19          [-1, 14]  1         0  models.common.Concat                    [1]
+ 20                -1  1    296448  models.common.C3                        [256, 256, 1, False]
+ 21                -1  1    590336  models.common.Conv                      [256, 256, 3, 2]
+ 22          [-1, 10]  1         0  models.common.Concat                    [1]
+ 23                -1  1   1182720  models.common.C3                        [512, 512, 1, False]
+ 24      [17, 20, 23]  1     16182  models.yolo.Detect                      [1, [[10, 13, 16, 30, 33, 23], [30, 61, 62, 45, 59, 119], [116, 90, 156, 198, 373, 326]], [128, 256, 512]]
+Model summary: 270 layers, 7022326 parameters, 7022326 gradients, 15.8 GFLOPs
+Transferred 343/349 items from yolov5s.pt
+[34m[1mAutoBatch: [39m[22mComputing optimal batch size for --imgsz 640
+[34m[1mAutoBatch: [39m[22mCUDA:0 (NVIDIA GeForce GTX 1050 Ti) 4.00G total, 0.06G reserved, 0.05G allocated, 3.88G free
+      Params      GFLOPs  GPU_mem (GB)  forward (ms) backward (ms)                   input                  output
+     7022326       15.85         0.256         27.92         41.89        (1, 3, 640, 640)                    list
+     7022326        31.7         0.442          36.9         57.18        (2, 3, 640, 640)                    list
+     7022326        63.4         0.824         61.18           103        (4, 3, 640, 640)                    list
+     7022326       126.8         1.596         113.4         194.8        (8, 3, 640, 640)                    list
+[34m[1mAutoBatch: [39m[22mUsing batch-size 18 for CUDA:0 3.60G/4.00G (90%)
+Scaled weight_decay = 0.0005625000000000001
+[34m[1moptimizer:[39m[22m SGD with parameter groups 57 weight (no decay), 60 weight, 60 bias
+[34m[1mtrain: [39m[22mScanning 'E:\githubcode\datasets\overwatch\labels\train1' images and labels...:   0%|          | 0/81 [00:00<?, ?it/s]
+[34m[1mtrain: [39m[22mScanning 'E:\githubcode\datasets\overwatch\labels\train1' images and labels...76 found, 5 missing, 0 empty, 0 corrupt: 100%|██████████| 81/81 [00:10<00:00,  7.43it/s]
+[34m[1mtrain: [39m[22mNew cache created: E:\githubcode\datasets\overwatch\labels\train1.cache
+[34m[1mval: [39m[22mScanning 'E:\githubcode\datasets\overwatch\labels\train1.cache' images and labels... 76 found, 5 missing, 0 empty, 0 corrupt: 100%|██████████| 81/81 [00:00<00:00, 80240.58it/s]
+Plotting labels to runs\train\exp25\labels.jpg...
+[34m[1mAutoAnchor: [39m[22m5.77 anchors/target, 1.000 Best Possible Recall (BPR). Current anchors are a good fit to dataset
+Image sizes 640 train, 640 val
+Using 0 dataloader workers
+Logging results to [1mruns\train\exp25
+Starting training for 300 epochs...
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+  0%|          | 0/5 [00:05<?, ?it/s]
+Traceback (most recent call last):
+  File "E:/githubcode/yolov5/train.py", line 667, in <module>
+    main(opt)
+  File "E:/githubcode/yolov5/train.py", line 562, in main
+    train(opt.hyp, opt, device, callbacks)
+  File "E:/githubcode/yolov5/train.py", line 349, in train
+    pred = model(imgs)  # forward
+  File "E:\Anaconda2_\envs\aimbot\lib\site-packages\torch\nn\modules\module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "E:\githubcode\yolov5\models\yolo.py", line 133, in forward
+    return self._forward_once(x, profile, visualize)  # single-scale inference, train
+  File "E:\githubcode\yolov5\models\yolo.py", line 156, in _forward_once
+    x = m(x)  # run
+  File "E:\Anaconda2_\envs\aimbot\lib\site-packages\torch\nn\modules\module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "E:\githubcode\yolov5\models\common.py", line 139, in forward
+    return self.cv3(torch.cat((self.m(self.cv1(x)), self.cv2(x)), 1))
+  File "E:\Anaconda2_\envs\aimbot\lib\site-packages\torch\nn\modules\module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "E:\githubcode\yolov5\models\common.py", line 47, in forward
+    return self.act(self.bn(self.conv(x)))
+  File "E:\Anaconda2_\envs\aimbot\lib\site-packages\torch\nn\modules\module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "E:\Anaconda2_\envs\aimbot\lib\site-packages\torch\nn\modules\conv.py", line 446, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  File "E:\Anaconda2_\envs\aimbot\lib\site-packages\torch\nn\modules\conv.py", line 442, in _conv_forward
+    return F.conv2d(input, weight, bias, self.stride,
+RuntimeError: CUDA out of memory. Tried to allocate 20.00 MiB (GPU 0; 4.00 GiB total capacity; 2.70 GiB already allocated; 0 bytes free; 2.93 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
